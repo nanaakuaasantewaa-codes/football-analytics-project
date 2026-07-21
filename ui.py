@@ -133,15 +133,25 @@ with st.sidebar:
 
             except Exception as e:
                 st.error(str(e))
+    st.subheader("Featured Analysis")
 
-    fixture_input = st.text_input(
-        "Fixture ID",
-        placeholder="e.g. 1234567",
-        value=st.session_state.fixture_id,
-        help="Enter the API-Football fixture ID of a completed match.",
-    )
+st.write("Manchester United vs Fulham")
 
-    st.session_state.fixture_id = fixture_input
+if st.button("View Featured Match"):
+    st.image("output/MAN_FUL/chart.png")
+    
+    with open("output/MAN_FUL/caption.txt", "r", encoding="utf-8") as f:
+        st.write(f.read())
+
+
+fixture_input = st.text_input(
+    "Fixture ID",
+    placeholder="e.g. 1234567",
+    value=st.session_state.fixture_id,
+    help="Enter the API-Football fixture ID of a completed match.",
+)
+
+st.session_state.fixture_id = fixture_input
 
     # ── Analysis type ─────────────────────────────────────────────
     st.divider()
