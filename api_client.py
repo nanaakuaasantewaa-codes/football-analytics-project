@@ -48,14 +48,12 @@ def verify_api_key() -> dict:
     return data.get("response", {})
 
 
-def get_todays_fixtures() -> list:
-    """Returns all World Cup fixtures scheduled or completed today."""
-    from datetime import date
-    today = date.today().isoformat()
-    data  = _get("fixtures", {
+def get_fixtures_by_date(selected_date: str) -> list:
+    """Returns Premier League fixtures for a chosen date."""
+    data = _get("fixtures", {
         "league": PREMIER_LEAGUE_LEAGUE_ID,
         "season": PREMIER_LEAGUE_SEASON,
-        "date":   today,
+        "date": selected_date,
     })
     return data.get("response", [])
 
@@ -148,3 +146,16 @@ def get_team_world_cup_history(team_id: int) -> dict:
         "knockout_appearances": knockout_apps,
         "knockout_wins":        knockout_wins,
     }
+if __name__ == "__main__":
+    data = _get("fixtures", {
+        "league": 39,
+        "season": 2024,
+    })
+
+    for match in data["response"][:5]:
+        print(
+            match["fixture"]["id"],
+            match["teams"]["home"]["name"],
+            "vs",
+            match["teams"]["away"]["name"]
+        )

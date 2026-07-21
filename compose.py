@@ -12,10 +12,14 @@ def _code(name: str) -> str:
     return name[:3].upper()
 
 
-def make_output_dir(meta: dict, root: str = "output") -> str:
-    folder = f"{meta['date']}_{_code(meta['team_a'])}_{_code(meta['team_b'])}"
-    path   = os.path.join(root, folder)
+def make_output_dir(meta):
+    root = "output"
+
+    folder = f"{_code(meta['team_a'])}_{_code(meta['team_b'])}"
+    path = os.path.join(root, folder)
+
     os.makedirs(path, exist_ok=True)
+
     return path
 
 

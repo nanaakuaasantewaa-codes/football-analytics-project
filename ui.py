@@ -13,8 +13,7 @@ The UI has three panels:
 import os
 import streamlit as st
 from PIL import Image
-
-from api_client   import verify_api_key, get_todays_fixtures
+from api_client import verify_api_key, get_fixtures_by_date
 from match_data   import load_match
 from stat_finder  import find_candidates
 from chart_builder import dispatch as build_chart
@@ -98,28 +97,40 @@ with st.sidebar:
 
     st.divider()
 
-    # ── Fixture selector ──────────────────────────────────────────
+   # ── Fixture selector ──────────────────────────────────────────
     st.markdown('<div class="section-label">1 · Select a Match</div>',
                 unsafe_allow_html=True)
 
-    if st.button("📅 Load today's fixtures", use_container_width=True):
-        with st.spinner("Fetching today's fixtures…"):
+    from datetime import date
+
+    selected_date = st.date_input(
+        "Match date",
+        value=date(2024, 8, 17)
+    )
+
+    if st.button("📅 Load fixtures", use_container_width=True):
+        with st.spinner("Fetching fixtures…"):
             try:
-                fixtures = get_todays_fixtures()
+                fixtures = get_fixtures_by_date(selected_date.isoformat())
+
                 if not fixtures:
-                    st.warning("No Premier League fixtures found for today.")
+                    st.warning("No Premier League fixtures found for this date.")
                 else:
                     for fix in fixtures:
-                        fid    = fix["fixture"]["id"]
-                        home   = fix["teams"]["home"]["name"]
-                        away   = fix["teams"]["away"]["name"]
+                        fid = fix["fixture"]["id"]
+                        home = fix["teams"]["home"]["name"]
+                        away = fix["teams"]["away"]["name"]
                         status = fix["fixture"]["status"]["short"]
-                        gh     = fix["goals"]["home"]
-                        ga     = fix["goals"]["away"]
-                        score  = f"{gh}-{ga}" if gh is not None else "vs"
-                        done   = status in ("FT", "AET", "PEN")
-                        icon   = "✅" if done else "🕐"
-                        st.code(f"{icon} {fid}  |  {home} {score} {away}  [{status}]")
+
+                        gh = fix["goals"]["home"]
+                        ga = fix["goals"]["away"]
+
+                        score = f"{gh}-{ga}" if gh is not None else "vs"
+
+                        st.code(
+                            f"{fid} | {home} {score} {away} [{status}]"
+                        )
+
             except Exception as e:
                 st.error(str(e))
 
@@ -129,6 +140,7 @@ with st.sidebar:
         value=st.session_state.fixture_id,
         help="Enter the API-Football fixture ID of a completed match.",
     )
+
     st.session_state.fixture_id = fixture_input
 
     # ── Analysis type ─────────────────────────────────────────────
@@ -205,9 +217,9 @@ if st.session_state.meta:
         st.markdown(f"### {meta['team_b']}")
 
     st.caption(
-        f"{meta['round']}  ·  {meta['competition']}  ·  "
-        f"{meta['venue']}  ·  {meta['date']}"
-    )
+    f"{meta.get('round', '')}  ·  {meta.get('competition', 'Premier League')}  ·  "
+    f"{meta.get('venue', 'Unknown venue')}"
+)
     st.divider()
 
 # ── Candidate selector ────────────────────────────────────────────
