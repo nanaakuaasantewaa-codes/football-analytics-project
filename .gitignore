@@ -1,5 +1,6 @@
 .venv/
 .env
 __pycache__/
-output/
+output/*
+!output/MAN_FUL/
 .vscode/
