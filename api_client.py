@@ -14,8 +14,9 @@ load_dotenv()
 
 BASE_URL            = "https://v3.football.api-sports.io"
 WORLD_CUP_LEAGUE_ID = 1        # FIFA World Cup on API-Football
-WORLD_CUP_SEASON    = 2022
-
+WORLD_CUP_SEASON    = 2026
+PREMIER_LEAGUE_LEAGUE_ID = 39
+PREMIER_LEAGUE_SEASON = 2024
 
 def _headers() -> dict:
     key = os.getenv("FOOTBALL_API_KEY")
@@ -52,8 +53,8 @@ def get_todays_fixtures() -> list:
     from datetime import date
     today = date.today().isoformat()
     data  = _get("fixtures", {
-        "league": WORLD_CUP_LEAGUE_ID,
-        "season": WORLD_CUP_SEASON,
+        "league": PREMIER_LEAGUE_LEAGUE_ID,
+        "season": PREMIER_LEAGUE_SEASON,
         "date":   today,
     })
     return data.get("response", [])
@@ -97,8 +98,8 @@ def get_fixture_metadata(fixture_id: int) -> dict:
         "score_a":      fix["goals"]["home"] or 0,
         "score_b":      fix["goals"]["away"] or 0,
         "round":        fix["league"]["round"],
-        "competition":  "FIFA World Cup 2026",
-        "date":         fix["fixture"]["date"][:10],
+       "competition":  "Premier League",
+        "date ":         fix["fixture"]["date"][:10],
         "venue":        fix["fixture"]["venue"]["name"],
         "goal_scorers": goals,
         "went_to_pens": status == "PEN",
@@ -114,7 +115,6 @@ def get_match_statistics(fixture_id: int) -> list:
             "Statistics are usually published 10-15 minutes after full time."
         )
     return stats
-
 
 def get_player_statistics(fixture_id: int) -> list:
     """Returns per-player stats for both teams in a fixture."""

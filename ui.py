@@ -107,7 +107,7 @@ with st.sidebar:
             try:
                 fixtures = get_todays_fixtures()
                 if not fixtures:
-                    st.warning("No World Cup fixtures found for today.")
+                    st.warning("No Premier League fixtures found for today.")
                 else:
                     for fix in fixtures:
                         fid    = fix["fixture"]["id"]
